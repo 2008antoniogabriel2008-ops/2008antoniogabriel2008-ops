@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CagadoresProfesionales</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(to bottom, #f5f5f5, #ffe0b2);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 40px;
+      color: #333;
+    }
+
+    .btn-container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    button {
+      padding: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 12px;
+      border: none;
+      transition: all 0.2s ease;
+      color: #fff;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    #opcionA { background-color: #1e88e5; }
+    #opcionB { background-color: #ff5722; }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    button:active {
+      transform: translateY(0px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Estilos del modal de video */
+    #videoModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    #videoModal video {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+    }
+    #videoModal span {
+      position: absolute;
+      top: 20px; right: 30px;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 22px; margin-bottom: 30px; }
+      button { font-size: 18px; padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>¿Quién va a cagar?💩😂</h1>
+
+  <div class="btn-container">
+    <button id="opcionA">Karencions la profesional😂</button>
+    <button id="opcionB">Antonio el más churro😉</button>
+  </div>
+  <a href="dashboard.html" 
+   style="margin-top:40px; display:block; font-size:18px; color:#333;">
+  Registros
+</a>
+
+
+  <!-- Modal de video -->
+  <div id="videoModal">
+    <span id="cerrar">&times;</span>
+    <video id="video" autoplay>
+      <source src="video.mp4" type="video/mp4">
+      Tu navegador no soporta videos HTML5
+    </video>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBiu1pI6m4rXCk-1GyTNfFNIlE2S5LtQBo",
+      authDomain: "cagadoresprofesionales-4dd14.firebaseapp.com",
+      projectId: "cagadoresprofesionales-4dd14",
+      storageBucket: "cagadoresprofesionales-4dd14.firebasestorage.app",
+      messagingSenderId: "963997041926",
+      appId: "1:963997041926:web:4755a8dd282e549d014a87"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const videoModal = document.getElementById("videoModal");
+    const video = document.getElementById("video");
+    const cerrar = document.getElementById("cerrar");
+
+    async function registrarClick(opcion) {
+      await addDoc(collection(db, "clicks"), {
+        opcion: opcion,
+        fecha: new Date().toLocaleDateString(),
+        hora: new Date().toLocaleTimeString(),
+        timestamp: Date.now()
+      });
+
+      // Mostrar video
+      videoModal.style.display = "flex";
+      video.currentTime = 0;
+      video.play();
+    }
+
+    document.getElementById("opcionA").onclick = () => registrarClick("Karencions la profesional😂");
+    document.getElementById("opcionB").onclick = () => registrarClick("Antonio el más churro😉");
+
+    cerrar.onclick = () => {
+      video.pause();
+      videoModal.style.display = "none";
+    }
+
+    // Cerrar modal si se hace clic fuera del video
+    videoModal.onclick = (e) => {
+      if(e.target === videoModal){
+        video.pause();
+        videoModal.style.display = "none";
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ContadorDeLosCagadores</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    #totales, #totalGeneral {
+      font-size: 20px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    #graficaContainer {
+      max-width: 90%;
+      margin: auto;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 300px !important;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 20px; }
+      #totales, #totalGeneral { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Contador De Los Cagadores💩</h1>
+
+  <div id="totales">
+    Karencions: <span id="totalA">0</span> | Antonio: <span id="totalB">0</span>
+  </div>
+
+  <div id="totalGeneral">Total: <span id="totalTodos">0</span></div>
+
+  <div id="graficaContainer">
+    <canvas id="grafica"></canvas>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBiu1pI6m4rXCk-1GyTNfFNIlE2S5LtQBo",
+      authDomain: "cagadoresprofesionales-4dd14.firebaseapp.com",
+      projectId: "cagadoresprofesionales-4dd14",
+      storageBucket: "cagadoresprofesionales-4dd14.firebasestorage.app",
+      messagingSenderId: "963997041926",
+      appId: "1:963997041926:web:4755a8dd282e549d014a87"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const totalAEl = document.getElementById("totalA");
+    const totalBEl = document.getElementById("totalB");
+    const totalTodosEl = document.getElementById("totalTodos");
+
+    const ctx = document.getElementById("grafica").getContext("2d");
+    const grafica = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ["Karencions", "Antonio"],
+        datasets: [{
+          label: 'Clics',
+          data: [0, 0],
+          backgroundColor: ['#1e88e5', '#ff5722'],
+          borderRadius: 10
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+          duration: 800,
+          easing: 'easeOutElastic' // animación tipo rebote más visual
+        },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { beginAtZero: true, ticks: { stepSize: 1 } },
+          y: { ticks: { font: { size: 16 } } }
+        }
+      }
+    });
+
+    onSnapshot(collection(db, "clicks"), snapshot => {
+      let totalA = 0;
+      let totalB = 0;
+
+      snapshot.docs.forEach(doc => {
+        const opcion = doc.data().opcion;
+        if(opcion === "Karencions la profesional😂") totalA++;
+        if(opcion === "Antonio el más churro😉") totalB++;
+      });
+
+      totalAEl.textContent = totalA;
+      totalBEl.textContent = totalB;
+
+      const totalGeneral = totalA + totalB;
+      totalTodosEl.textContent = totalGeneral;
+
+      // Cambiar colores según quién tenga más clics
+      let colorA = '#1e88e5';
+      let colorB = '#ff5722';
+      if(totalB > totalA) { colorA = '#90caf9'; colorB = '#d84315'; }
+      if(totalA === totalB) { colorA = '#42a5f5'; colorB = '#ff7043'; }
+
+      grafica.data.datasets[0].data = [totalA, totalB];
+      grafica.data.datasets[0].backgroundColor = [colorA, colorB];
+      grafica.update();
+    });
+  </script>
+
+</body>
+</html>
