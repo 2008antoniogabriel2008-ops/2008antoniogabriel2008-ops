@@ -13,7 +13,7 @@ yarn-error.log*
 .cache/
 
 # Dependencias (NORMALMENTE IGNORADAS)
-# node_modules/
+ node_modules/
 
 # Opcional: build outputs
 dist/
